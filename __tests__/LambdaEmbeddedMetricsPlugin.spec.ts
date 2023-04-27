@@ -10,6 +10,7 @@ const pascalifyObject = (obj: Record<string, string>): Record<string, string> =>
     }, {});
 
 const generateExpectedCall = (
+    serviceName: string,
     metricName: string,
     status: 'Start' | 'Success' | 'Failure',
     unit: 'Count' | 'Seconds',
@@ -24,7 +25,7 @@ const generateExpectedCall = (
             {
                 Dimensions: [Object.keys(tags)],
                 Metrics: [{Name: `${metricName}${status}`, Unit: unit}],
-                Namespace: 'aws-embedded-metrics',
+                Namespace: serviceName,
             },
         ],
     },
@@ -75,13 +76,13 @@ describe('LambdaEmbeddedMetricsPlugin', () => {
 
         expect(firstCall).toEqual(
             expect.objectContaining(
-                generateExpectedCall(metricName, 'Start', 'Count', 1, expectedContext, expectedTags)
+                generateExpectedCall(serviceName, metricName, 'Start', 'Count', 1, expectedContext, expectedTags)
             )
         );
 
         expect(lastCall).toEqual(
             expect.objectContaining(
-                generateExpectedCall(metricName, 'Success', 'Seconds', 0, expectedContext, expectedTags)
+                generateExpectedCall(serviceName, metricName, 'Success', 'Seconds', 0, expectedContext, expectedTags)
             )
         );
     });
@@ -119,13 +120,13 @@ describe('LambdaEmbeddedMetricsPlugin', () => {
 
         expect(firstCall).toEqual(
             expect.objectContaining(
-                generateExpectedCall(metricName, 'Start', 'Count', 1, expectedContext, expectedTags)
+                generateExpectedCall(serviceName, metricName, 'Start', 'Count', 1, expectedContext, expectedTags)
             )
         );
 
         expect(lastCall).toEqual(
             expect.objectContaining(
-                generateExpectedCall(metricName, 'Failure', 'Seconds', 0, expectedContext, expectedTags)
+                generateExpectedCall(serviceName, metricName, 'Failure', 'Seconds', 0, expectedContext, expectedTags)
             )
         );
     });

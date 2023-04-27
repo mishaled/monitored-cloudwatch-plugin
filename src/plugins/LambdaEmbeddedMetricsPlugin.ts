@@ -27,6 +27,7 @@ export class LambdaEmbeddedMetricsPlugin implements MonitoredPlugin {
         context?: Record<string, string> | undefined
     ): Promise<void> {
         const metrics = createMetricsLogger();
+        metrics.setNamespace(this.opts.serviceName);
 
         const dimensions = pascalifyObject(tags ?? {});
         const properties = pascalifyObject(context ?? {});
